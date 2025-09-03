@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Calendar,
@@ -8,12 +8,11 @@ import {
   Tag,
   X,
   LogOut,
-  Settings,
   ChevronRight,
   Shield,
   Activity,
 } from "lucide-react";
-
+import { toast } from "sonner";
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -30,6 +29,15 @@ const navLinks = [
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // logout function
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    toast.success("Logged out successfully");
+    router.replace("/login");
+  };
 
   return (
     <>
@@ -65,32 +73,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           >
             <X className="w-5 h-5" />
           </button>
-
-          {/* Decorative gradient line */}
           <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#38e07b] to-transparent" />
         </div>
 
-        {/* Admin Info Card */}
-        {/* <div className="mx-4 mt-6 mb-4 p-4 bg-[#0f1611]/60 backdrop-blur-sm border border-[#29382f]/50 rounded-xl">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#38e07b]/20 to-[#2dd968]/20 rounded-full flex items-center justify-center border border-[#38e07b]/30">
-              <Settings className="w-6 h-6 text-[#38e07b]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">
-                Administrator
-              </p>
-              <p className="text-xs text-[#9eb7a8] truncate">System Manager</p>
-            </div>
-          </div>
-        </div> */}
-
         {/* Navigation */}
         <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto scrollbar-none">
-          {/* <div className="text-xs font-semibold text-[#9eb7a8] uppercase tracking-wider mb-3 px-3">
-            Navigation
-          </div> */}
-          {navLinks.map((link, index) => {
+          {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
@@ -103,7 +91,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     : "text-[#9eb7a8] hover:bg-[#0f1611]/60 hover:text-[#38e07b] hover:border-[#29382f]/50 border border-transparent"
                 }`}
               >
-                {/* Active indicator */}
                 {isActive && (
                   <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-[#38e07b] to-[#2dd968] rounded-r-full" />
                 )}
@@ -133,8 +120,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     {link.name}
                   </span>
                 </div>
-
-                {/* Arrow indicator */}
                 <ChevronRight
                   className={`w-4 h-4 transition-all duration-300 ${
                     isActive
@@ -142,8 +127,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                       : "text-transparent group-hover:text-[#9eb7a8] group-hover:transform group-hover:translate-x-1"
                   }`}
                 />
-
-                {/* Hover glow effect */}
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#38e07b]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               </Link>
             );
@@ -152,7 +135,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
         {/* Footer / Logout */}
         <div className="p-4 border-t border-[#29382f]/50 bg-[#0a0f0c]/60 backdrop-blur-sm">
-          <button className="group flex items-center w-full p-3 text-[#9eb7a8] rounded-xl hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 border border-transparent transition-all duration-300">
+          <button
+            onClick={handleLogout}
+            className="group flex items-center w-full p-3 text-[#9eb7a8] rounded-xl hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 border border-transparent transition-all duration-300"
+          >
             <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[#0f1611]/50 group-hover:bg-red-500/10 transition-all duration-300">
               <LogOut className="w-5 h-5 group-hover:text-red-400 transition-colors duration-300" />
             </div>
@@ -163,7 +149,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </button>
         </div>
 
-        {/* Decorative bottom gradient */}
         <div className="h-2 bg-gradient-to-r from-[#38e07b]/20 via-[#2dd968]/30 to-[#38e07b]/20" />
       </aside>
     </>

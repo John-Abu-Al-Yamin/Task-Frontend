@@ -1,13 +1,57 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
-import { Menu } from "lucide-react";
+import { Menu, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
+
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem("token");
+      const userStr = localStorage.getItem("user");
+
+      // لو مفيش تسجيل دخول → يروح على login
+      if (!token || !userStr) {
+        router.replace("/login");
+        return;
+      }
+
+      const user = JSON.parse(userStr);
+
+      // لو role مش admin → يروح على checkpoint
+      if (user.role !== "admin") {
+        router.replace("/checkpoint");
+        return;
+      }
+
+      // لو admin → يسمح له
+      setIsAuthorized(true);
+    } catch (err) {
+      console.error("Auth check failed", err);
+      router.replace("/login");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#38e07b]" />
+      </div>
+    );
+  }
+
+  if (!isAuthorized) return null;
 
   return (
     <div className="flex h-screen">

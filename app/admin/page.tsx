@@ -5,8 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Car,
   Shield,
-  Users,
-  Clock,
   MapPin,
   CheckCircle,
   XCircle,

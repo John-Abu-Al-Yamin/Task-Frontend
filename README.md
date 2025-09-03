@@ -1,37 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Parking Reservation System — Frontend (Next.js + TypeScript)
+Overview
 
-## Getting Started
+**Repository**
+https://github.com/John-Abu-Al-Yamin/Task-Frontend
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Framework: Next.js (App Router)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Language: TypeScript
 
-## Learn More
+State & Data Fetching: Used RTK Query only instead of combining Redux Toolkit + React Query to reduce complexity and boilerplate while still getting caching, invalidations, and retries in one library.
 
-To learn more about Next.js, take a look at the following resources:
+WebSocket: Implemented via the browser API with a simple wrapper.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+UI/UX: Minimal UI components with clear loading/error states.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Why RTK Query?
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# Task-Frontend
+Single library to manage fetching, caching, and synchronization instead of mixing multiple tools.
+
+Excellent TypeScript support with auto-generated types from server responses.
+
+Built-in caching and revalidation policies, plus support for optimistic updates when needed. 
+
+
+Features Coverage
+1. Gate Screen (/gate/[id])
+
+Tabs for Visitor and Subscriber.
+
+Shows parking zones with server status indicators (occupied, free, reserved, available, etc.).
+
+Zone selection enabled/disabled based on open and availableForVisitors.
+
+Complete check-in flow for visitors and subscribers.
+
+Printable ticket after check-in.
+
+Real-time updates via WebSocket (zone-update, admin-update). 
+
+2. Checkpoint Screen (/checkpoint)
+
+Employee login.
+
+Ticket number input with validation.
+
+Shows breakdown and amount exactly as returned from the server.
+
+Supports forced conversion from subscription to visitor (forceConvertToVisitor).
+
+3. Admin Panel (/admin/*)
+
+Admin login.
+
+Manage employees.
+
+View parking reports and zone status.
+
+Open/close zones.
+
+Update pricing categories.
+
+Add rush hours and vacations.
+
+Live activity log via WebSocket.
+
+✅ Rule respected: No business logic on the frontend — the app only displays fields exactly as returned from the server. 
+
+
+
+Project Structure
+
+Organized for clarity and teamwork:
+app/
+  gate/[id]/page.tsx       # Gate screen
+  checkpoint/page.tsx      # Checkpoint screen
+  admin/page.tsx           # Admin panel
+
+src/
+  components/              # Reusable UI components
+    GateHeader.tsx
+    ZoneCard.tsx
+    TicketModal.tsx
+    CheckoutPanel.tsx
+    AdminReports.tsx
+
+  services/                # API layer (RTK Query + WebSocket wrapper)
+    api.ts
+    ws.ts
+
+  store/                   # Additional state slices if needed
+  types/                   # Shared TypeScript types
+  validations/             # Form validation schemas
+
+
+Implementation Notes
+
+All amounts, breakdowns, and reservations are rendered as returned from the backend.
+
+Clear loading/error states throughout the app.
+
+WebSocket connection status indicator.
+
+Printable ticket from the check-in screen. 
+
+
